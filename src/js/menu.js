@@ -1,6 +1,49 @@
 import * as THREE from 'three';
 
 let scrollable = document.querySelector('.image');
+let grayscaleFragment = `float gray = (color.r + color.g + color.b) / 3.0;
+vec3 grayscale = vec3(gray);
+
+gl_FragColor = vec4(grayscale, 1.0);`
+let normalColorFragment = `gl_FragColor = vec4(color,uAlpha);`
+let changeFragment = grayscaleFragment;
+/* let imageHover = document.querySelectorAll('img'); */
+/* console.log(imageHover)
+imageHover.forEach((image)=> {
+    image.addEventListener('mouseenter',() => {
+        changeFragment=normalColorFragment
+        console.log(image)
+    })
+}) */
+const imageHover = () => {
+  let hoverImage = document.querySelector('.image1');
+  console.log(hoverImage)
+  hoverImage.addEventListener('click', (e)=> {
+    console.log(e, 'je passe ici')
+  })
+}
+
+let fragmentShaders = `
+uniform sampler2D uTexture;
+uniform float uAlpha;
+uniform vec2 uOffset;
+varying vec2 vUv;
+
+vec3 rgbShift(sampler2D textureImage, vec2 uv, vec2 offset) {
+  float r = texture2D(textureImage,uv + offset).r;
+  vec2 gb = texture2D(textureImage,uv).gb;
+  return vec3(r,gb);
+}
+
+void main() {
+  vec3 color = rgbShift(uTexture,vUv,uOffset);
+  ${changeFragment}
+  // gl_FragColor = vec4(color,uAlpha);
+  //float gray = (color.r + color.g + color.b) / 3.0;
+    //vec3 grayscale = vec3(gray);
+
+    //gl_FragColor = vec4(grayscale, 1.0);
+}`;
 
 let current = 0;
 let target = 0;
@@ -146,25 +189,7 @@ class MeshItem{
                vec3 newPosition = deformationCurve(position, uv, uOffset);
                gl_Position = projectionMatrix * modelViewMatrix * vec4( newPosition, 1.0 );
             }`,
-            fragmentShader:  `uniform sampler2D uTexture;
-            uniform float uAlpha;
-            uniform vec2 uOffset;
-            varying vec2 vUv;
-           
-           vec3 rgbShift(sampler2D textureImage, vec2 uv, vec2 offset) {
-              float r = texture2D(textureImage,uv + offset).r;
-              vec2 gb = texture2D(textureImage,uv).gb;
-              return vec3(r,gb);
-            }
-           
-           void main() {
-              vec3 color = rgbShift(uTexture,vUv,uOffset);
-              // gl_FragColor = vec4(color,uAlpha);
-              float gray = (color.r + color.g + color.b) / 3.0;
-                 vec3 grayscale = vec3(gray);
-
-                gl_FragColor = vec4(grayscale, 1.0);
-            }`,
+            fragmentShader:  fragmentShaders,
             transparent: true,
             // wireframe: true,
             side: THREE.DoubleSide,
@@ -185,7 +210,7 @@ class MeshItem{
         this.uniforms.uOffset.value.set(this.offset.x * 0.0, -(target- current) * 0.0003 )
     }
 }
-
+imageHover()
 init()
 new EffectCanvas()
 

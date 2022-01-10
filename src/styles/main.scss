@@ -103,12 +103,12 @@ h2 {
   display: flex;
   flex-direction: column;
   position: relative;
+  cursor: pointer;
 
 }
 .image1 {
   width: 60%;
   height: 500px;
-  filter: grayscale(100%);
 }
 .image2 {
   width: 25%;
@@ -144,6 +144,7 @@ img {
   height: 80%;
   /* width: 40%; */
   visibility: hidden;
+  cursor: pointer;
 }
 
 canvas {
