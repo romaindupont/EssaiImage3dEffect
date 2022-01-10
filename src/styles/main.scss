@@ -20,7 +20,6 @@ ul, li {
 header {
   display: flex;
   width: 100vw;
-  /* background-color: red; */
   height: 100px;
   margin: 0;
   font-family: 'Bebas Neue', cursive;
@@ -29,19 +28,16 @@ ul {
   display: flex;
   align-items: center;
   width: 70vw;
-  /* background-color: green; */
   height: 100%;
   margin: 0;
   justify-content: space-evenly;
 }
 li {
   width: 10%;
-  /* display: flex; */
 }
 h1 {
   display: flex;
   width: 30vw;
-  /* background-color: yellow; */
   height: 100%;
   margin: 0;
   align-items: center;
@@ -55,7 +51,6 @@ nav {
 
 .section1 {
   width: 100vw;
-  /* background: red; */
   height: 30%;
   display: flex;
   border-bottom: 2px solid #e4dede;
@@ -72,7 +67,6 @@ h2 {
 }
 .section1-div {
   width: 60%;
-  /* background: green; */
   position: relative;
   margin-left: 3rem;
   
@@ -99,7 +93,7 @@ h2 {
 }
 .image {
   width: 100vw;
-  height: 1000px;
+  height: 3000px;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -109,6 +103,7 @@ h2 {
 .image1 {
   width: 60%;
   height: 500px;
+
 }
 .image2 {
   width: 25%;
@@ -124,25 +119,18 @@ h2 {
   top: 0;
   left: 100px;
 }
-/* .image1 {
-  width: 70%;
-  & > .containerImage >img {
-    width: 100%;
-  }
-} */
 .image-container {
   position: relative;
   width: 100%;
-  height: 100vh;
+  height: 500px;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
+			
 }
 img {
-  /* position: absolute; */
   height: 80%;
-  /* width: 40%; */
   visibility: hidden;
   cursor: pointer;
 }
@@ -167,57 +155,25 @@ canvas {
   }
 }
 
-/* .image2 {
-  width: 100%;
-  display: flex;
-  justify-content: flex-end;
-  & > .containerImage > img {
-    width: 25%;
-    height: 500px;
-  }
-} */
-/* .image3 {
-  width: 70%;
-  display: flex;
-  justify-content: center;
-  & > .containerImage > img {
-    width: 700px;
-    height: 500px;
-  }
-} */
 .containerImage {
   position: relative;
   width: 100vw;
   height: 100%;
 }
-.imageTop {
-  filter:grayscale(100%);
-  width: 40%;
-  &:hover {
-    filter:grayscale(0);
-    cursor: pointer;
-    transition: filter 800ms ease-in-out;
-  }
-}
-/* .imageBottom {
-  filter:grayscale(100%) url('#myFilter');
-  position: absolute;
-  top:0;
-  left: 0;
-} */
-
-@keyframes distorsion {
-  0% {
-    /* transform: skew(0deg, 20deg); */
-    height: 0px;
-    /* top: 0; */
-    transform: translate3d(0, 500px, 0) skewY(20deg);
-  }
-  100% {
-    /* transform: none; */
-    /* height: 500px; */
-    /* top: -100px; */
-    transform: translate3d(0, 0px, 0) skewY(0);
-  }
-  
+	.link {
+    position: absolute;
+		width: 100px;
+		height: 100px;
+    display: flex;
+		text-align: center;
+    justify-content: center;
+    align-items: center;
+		text-decoration: none;
+		color: white;
+		opacity: 0.8;
+		font-weight: 900;
+		border: 1px solid white;
+		border-radius: 50%;
+		padding: 0.5em;
+		
 }

@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 let scrollable = document.querySelector('.image');
 let grayscaleFragment = `float gray = (color.r + color.g + color.b) / 3.0;
@@ -7,22 +8,23 @@ vec3 grayscale = vec3(gray);
 gl_FragColor = vec4(grayscale, 1.0);`
 let normalColorFragment = `gl_FragColor = vec4(color,uAlpha);`
 let changeFragment = grayscaleFragment;
-/* let imageHover = document.querySelectorAll('img'); */
-/* console.log(imageHover)
-imageHover.forEach((image)=> {
-    image.addEventListener('mouseenter',() => {
-        changeFragment=normalColorFragment
-        console.log(image)
-    })
-}) */
-const imageHover = () => {
-  let hoverImage = document.querySelector('.image1');
-  console.log(hoverImage)
-  hoverImage.addEventListener('click', (e)=> {
-    console.log(e, 'je passe ici')
-  })
+
+let newShader = `
+uniform sampler2D uTexture;
+uniform float uAlpha;
+uniform vec2 uOffset;
+varying vec2 vUv;
+
+vec3 rgbShift(sampler2D textureImage, vec2 uv, vec2 offset) {
+  float r = texture2D(textureImage,uv + offset).r;
+  vec2 gb = texture2D(textureImage,uv).gb;
+  return vec3(r,gb);
 }
 
+void main() {
+  vec3 color = rgbShift(uTexture,vUv,uOffset);
+  gl_FragColor = vec4(color,uAlpha);
+}`
 let fragmentShaders = `
 uniform sampler2D uTexture;
 uniform float uAlpha;
@@ -95,22 +97,73 @@ class EffectCanvas{
     
         // Create new scene
         this.scene = new THREE.Scene();
-    
+				console.log(this.scene)
+			
         // Initialize perspective camera
     
         let perspective = 1000;
         const fov = (180 * (2 * Math.atan(window.innerHeight / 2 / perspective))) / Math.PI; // see fov image for a picture breakdown of this fov setting.
         this.camera = new THREE.PerspectiveCamera(fov, this.viewport.aspectRatio, 1, 1000)
         this.camera.position.set(0, 0, perspective); // set the camera position on the z axis.
-        
-        // renderer
-        // this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         this.renderer.setSize(this.viewport.width, this.viewport.height); // uses the getter viewport function above to set size of canvas / renderer
         this.renderer.setPixelRatio(window.devicePixelRatio); // Import to ensure image textures do not appear blurred.
         this.container.appendChild(this.renderer.domElement); // append the canvas to the main element
+				const clicOnImages = document.querySelectorAll('.containerImage');
+				const array = []
+				array.push(clicOnImages)
+				console.log(array)
+				array.forEach((image)=> {
+					image.forEach((img, index)=> {
+						img.addEventListener('mouseenter', () => {
+							console.log(index)
+							this.scene.children[index].material.fragmentShader = newShader;
+							const aLink = document.createElement('a');
+							aLink.textContent= "Open For More";
+							aLink.classList.add("link");
+							
+							if(index === 0) {
+								aLink.style.top = '50%';
+								aLink.style.left = '25%';
+								aLink.style.right = '';
+							}
+							if(index === 3) {
+								aLink.style.top = '50%';
+								aLink.style.left = '25%';
+								aLink.style.right = '';
+							}
+							if(index === 2) {
+								aLink.style.top = '25%';
+								aLink.style.left = '25%';
+								aLink.style.right = '';
+							}
+							if(index === 5) {
+								aLink.style.top = '25%';
+								aLink.style.left = '25%';
+								aLink.style.right = '';
+							}
+							if(index === 1) {
+								aLink.style.top = `${10}px`;
+								aLink.style.left = '';
+								aLink.style.right = `15%`;
+							}
+							if(index === 4) {
+								aLink.style.top = `${10}px`;
+								aLink.style.left = '';
+								aLink.style.right = `15%`;
+							}
+							image[index].appendChild(aLink);
+		
+							})
+							img.addEventListener('mouseleave', () => {
+								this.scene.children[index].material.fragmentShader = fragmentShaders;
+							const aLink = document.querySelector(".link");
+								aLink.remove()
+								})
+					})
+					})
     }
-
+				
     onWindowResize(){
         init();
         this.camera.aspect = this.viewport.aspectRatio; // readjust the aspect ratio.
@@ -125,15 +178,18 @@ class EffectCanvas{
             this.meshItems.push(meshItem);
         })
     }
-
+	
     // Animate smoothscroll and meshes. Repeatedly called using requestanimationdrame
     render(){
+
         smoothScroll();
         for(let i = 0; i < this.meshItems.length; i++){
             this.meshItems[i].render();
         }
-        this.renderer.render(this.scene, this.camera)
-        requestAnimationFrame(this.render.bind(this));
+				
+        this.renderer.render(this.scene, this.camera)/* 
+				this.renderer.domElement.addEventListener('click', this.onMouseClick()); */
+				requestAnimationFrame(this.render.bind(this));
     } 
 }
 
@@ -146,7 +202,6 @@ class MeshItem{
         this.sizes = new THREE.Vector2(0,0); //Size of mesh on screen. Will be updated below.
         this.createMesh();
     }
-
     getDimensions(){
         const {width, height, top, left} = this.element.getBoundingClientRect();
         this.sizes.set(width, height);
@@ -191,7 +246,6 @@ class MeshItem{
             }`,
             fragmentShader:  fragmentShaders,
             transparent: true,
-            // wireframe: true,
             side: THREE.DoubleSide,
         })
         this.mesh = new THREE.Mesh( this.geometry, this.material );
@@ -210,7 +264,7 @@ class MeshItem{
         this.uniforms.uOffset.value.set(this.offset.x * 0.0, -(target- current) * 0.0003 )
     }
 }
-imageHover()
+/* imageHover() */
 init()
 new EffectCanvas()
 
